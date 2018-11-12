@@ -12,9 +12,14 @@ install:
   - pip install .
 # Operating system
 os: linux
-dist: trusty
+dist: precise
+#os: linux
+#dist: trusty
 #os: linux
 #dist: xenial
+os: osx
+language: generic
+env: PYTHON=2.7
 
 # command to run tests
 script: pytest
