@@ -11,15 +11,15 @@ install:
   - pip install -r requirements.txt
   - pip install .
 # Operating system
-os: linux
-dist: precise
+#os: linux
+#dist: precise
 #os: linux
 #dist: trusty
 #os: linux
 #dist: xenial
 os: osx
 language: generic
-env: PYTHON=2.7
+env: PYTHON=3.5
 
 # command to run tests
 script: pytest
