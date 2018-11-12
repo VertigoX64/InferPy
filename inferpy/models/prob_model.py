@@ -79,7 +79,7 @@ class ProbModel(object):
 
 
 
-        self.q_vars = {}
+        self.Q = None
         self.data = {}
 
         self.propagated = False
@@ -124,6 +124,8 @@ class ProbModel(object):
 
     # other methods
 
+
+
     def compile(self, infMethod="KLqp", Q=None, proposal_vars=None):
 
         """ This method initializes the structures for making inference in the model."""
@@ -140,19 +142,19 @@ class ProbModel(object):
 
         self.infMethod = infMethod
 
-        if Q == None:
-            Q = inf.Qmodel.build_from_pmodel(self, self.infMethod=="MetropolisHastings")
+        self.Q = Q
+
+        if self.Q == None:
+            self.Q = inf.Qmodel.build_from_pmodel(self, self.infMethod=="MetropolisHastings")
 
         if proposal_vars==None and self.__inf_with_proposal_vars():
             self.proposal_vars = dict([(v.dist, v.dist.copy()) for v in self.latent_vars])
 
 
-        self.q_vars = Q.dict
-
         self.propagated = False
 
     @input_model_data
-    def fit(self, data, reset_tf_vars=True):
+    def fit(self, data):
 
         """ Assings data to the observed variables"""
 
@@ -168,7 +170,7 @@ class ProbModel(object):
 
 
         # prepare inference arguments
-        inf_args = {"latent_vars":self.q_vars}
+        inf_args = {"latent_vars":self.Q.dict}
         if self.__inf_with_proposal_vars():
             inf_args.update({"proposal_vars":self.proposal_vars})
 
@@ -178,28 +180,8 @@ class ProbModel(object):
         # inference
         self.inference = getattr(ed.inferences, self.infMethod)(**inf_args)
 
-        self.inference.initialize()
 
-        sess = inf.util.Runtime.tf_sess
-
-
-
-        if reset_tf_vars:
-            tf.global_variables_initializer().run()
-
-        else:
-
-            for t in tf.global_variables():
-                if not sess.run(tf.is_variable_initialized(t)):
-                    sess.run(tf.variables_initializer([t]))
-
-
-        for _ in range(self.inference.n_iter):
-            info_dict = self.inference.update()
-            self.inference.print_progress(info_dict)
-
-        self.inference.finalize()
-
+        self.inference.run()
 
 
         self.propagated = True
@@ -313,13 +295,13 @@ class ProbModel(object):
 
         """ Clear the structues created during the compilation of the model """
 
-        self.q_vars = {}
+        self.Q = None
         self.data = {}
         self.propagated = False
 
     def is_compiled(self):
         """ Determines if the model has been compiled """
-        return len(self.q_vars) > 0
+        return self.Q != None
 
     def get_config(self):
         raise NotImplementedError
