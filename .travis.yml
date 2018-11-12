@@ -17,10 +17,13 @@ install:
 #dist: trusty
 #os: linux
 #dist: xenial
-os: osx
-language: generic
-osx_image: xcode10.1
-env: PYTHON=3.5.1
+os:
+  - osx
+    language: generic
+    osx_image: xcode10.1
+    env: PYTHON=3.5.1
+  - linux
+    dist: precise
 
 # command to run tests
 script: pytest
