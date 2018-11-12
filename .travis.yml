@@ -19,7 +19,8 @@ install:
 #dist: xenial
 os: osx
 language: generic
-env: TOXENV=py33
+osx_image: xcode10.1
+env: PYTHON=3.5.1
 
 # command to run tests
 script: pytest
