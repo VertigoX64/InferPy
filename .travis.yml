@@ -11,8 +11,9 @@ install:
   - pip install -r requirements.txt
   - pip install .
 # Operating system
-os: osx
-osx_image: xcode10.1
+os: linux
+dist: trusty
+dist: xenial
 
 # command to run tests
 script: pytest
