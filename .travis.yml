@@ -13,8 +13,8 @@ install:
 # Operating system
 os: linux
 dist: trusty
-os: linux
-dist: xenial
+#os: linux
+#dist: xenial
 
 # command to run tests
 script: pytest
