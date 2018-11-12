@@ -10,7 +10,11 @@ python:
 install:
   - pip install -r requirements.txt
   - pip install .
-# operating system
-os: linux
+# Operating system
+os:
+  - windows
+  - linux
+  - osx
+
 # command to run tests
 script: pytest
