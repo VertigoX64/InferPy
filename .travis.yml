@@ -19,7 +19,7 @@ install:
 #dist: xenial
 os: osx
 language: generic
-env: PYTHON= "3.5.1"
+env: PYTHON= 3.5.1
 
 # command to run tests
 script: pytest
