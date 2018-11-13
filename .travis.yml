@@ -7,12 +7,9 @@ python:
 #  - "pypy"   # PyPy2 5.8.0
 #  - "pypy3"  # Pypy3 5.8.0-beta0
 # command to install dependencies
-os:
-  - linux
-  dist: xenial
-  - osx
-  language: generic
-  env: PYTHON=3.5.1
+os: osx
+language: generic
+env: PYTHON=3.5.1
 
 install:
   - pip install -r requirements.txt
