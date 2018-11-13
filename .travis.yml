@@ -11,7 +11,7 @@ python:
 os: osx
 python: "3.6"
 #language: generic
-#osx_image: xcode8.3
+osx_image: xcode8.3
 #env: PYTHON=3.5.1
 
 install:
