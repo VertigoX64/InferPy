@@ -8,6 +8,11 @@ python:
 #  - "pypy3"  # Pypy3 5.8.0-beta0
 # command to install dependencies
 
+before_install:
+- brew cask uninstall oclint
+- brew tap oclint/formulae
+- brew install oclint
+
 os: osx
 language: generic
 env: PYTHON=3.5.1
