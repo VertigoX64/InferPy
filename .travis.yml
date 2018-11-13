@@ -18,11 +18,11 @@ install:
 #os: l
 #dist: xenial
 os:
-  - osx
+    - osx
     language: generic
     osx_image: xcode10
     env: PYTHON=3.5.1
-  - linux
+    - linux
     dist: xenial
 
 # command to run tests
