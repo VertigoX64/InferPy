@@ -9,9 +9,10 @@ python:
 # command to install dependencies
 
 os: osx
-language: generic
-osx_image: xcode8.3
-env: PYTHON=3.5.1
+python: "3.6"
+#language: generic
+#osx_image: xcode8.3
+#env: PYTHON=3.5.1
 
 install:
   - python -m pip install -U pip
