@@ -23,7 +23,7 @@ os:
     osx_image: xcode10
     env: PYTHON=3.5.1
   - linux
-    dist: precise
+    dist: xenial
 
 # command to run tests
 script: pytest
