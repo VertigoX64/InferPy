@@ -16,22 +16,15 @@
 
 """ Module implementing some useful operations over tensors and random variables """
 
-
-
-
 import numpy as np
 import inferpy.models
 import tensorflow as tf
-import collections
+import functools
 import six
 
 
-
-
 def param_to_tf(x):
-
     """ Transforms either a scalar or a random variable into a Tensor"""
-
 
     if np.isscalar(x):
         return tf.constant(x, dtype="float32")
@@ -41,9 +34,7 @@ def param_to_tf(x):
         raise ValueError("wrong input value in param_to_tf")
 
 
-
 def case_states(var, d, default=None, exclusive=True, strict=False, name='case'):
-
     """ Control flow operation depending of the outcome of a discrete variable.
 
     Internally, the operation tensorflow.case is invoked. Unlike the tensorflow operation, this one
@@ -68,20 +59,13 @@ def case_states(var, d, default=None, exclusive=True, strict=False, name='case')
     if not isinstance(var, inferpy.models.RandomVariable):
         var = inferpy.models.Deterministic(var)
 
-
-    def f(p): return tf.constant(p)
-
-
     for s, p in six.iteritems(d):
+        out_d.update({tf.reduce_all(tf.equal(var.dist, tf.constant(s))): functools.partial(tf.constant, p)})
 
-        out_d.update({tf.reduce_all(tf.equal(var.dist, tf.constant(s))): (lambda pp : lambda: f(pp))(p)})
-
-    return tf.case(out_d, default=default, exclusive=exclusive,strict=strict,name=name)
-
+    return tf.case(out_d, default=default, exclusive=exclusive, strict=strict, name=name)
 
 
 def case(d, default=None, exclusive=True, strict=False, name='case'):
-
     """ Control flow operation depending of the outcome of a tensor. Any expression
     in tensorflow giving as a result a boolean is allowed as condition.
 
@@ -100,21 +84,15 @@ def case(d, default=None, exclusive=True, strict=False, name='case'):
 
     """
 
-
     out_d = {}
 
-    def f(p): return tf.constant(p)
-
     for c, p in six.iteritems(d):
-
-        out_d.update({tf.reduce_all(tf.equal(c.base_object, True)): (lambda pp : lambda: f(pp))(p)})
-
+        out_d.update({tf.reduce_all(tf.equal(c.base_object, True)): functools.partial(tf.constant, p)})
 
     if default != None:
-        default = (lambda pp : lambda: f(pp))(default)
+        default = (lambda pp: lambda: f(pp))(default)
 
-    return tf.case(out_d, default=default, exclusive=exclusive,strict=strict,name=name)
-
+    return tf.case(out_d, default=default, exclusive=exclusive, strict=strict, name=name)
 
 
 def gather(
@@ -122,7 +100,7 @@ def gather(
         indices,
         validate_indices=None,
         name=None,
-        axis=0 ):
+        axis=0):
     """ Operation for selecting some of the items in a tensor.
 
     Internally, the operation tensorflow.gather is invoked. Unlike the tensorflow operation, this one
@@ -145,11 +123,10 @@ def gather(
 
     """
 
+    tf_params = params.base_object if isinstance(params, inferpy.models.RandomVariable) else params
+    tf_indices = indices.base_object if isinstance(indices, inferpy.models.RandomVariable) else indices
 
-    tf_params = params.base_object if isinstance(params, inferpy.models.RandomVariable)==True else params
-    tf_indices = indices.base_object if isinstance(indices, inferpy.models.RandomVariable) == True else indices
-
-    return  tf.gather(tf_params, tf_indices, validate_indices, name, axis)
+    return tf.gather(tf_params, tf_indices, validate_indices, name, axis)
 
 
 def matmul(
@@ -162,8 +139,6 @@ def matmul(
         a_is_sparse=False,
         b_is_sparse=False,
         name=None):
-
-
     """ Matrix multiplication.
 
     Input objects may be tensors but also InferPy variables.
@@ -188,17 +163,14 @@ def matmul(
 
     res = inferpy.models.Deterministic()
 
-
     a_shape = shape_to_list(a)
     b_shape = shape_to_list(b)
-
 
     if isinstance(a, inferpy.models.RandomVariable):
         a = a.base_object
 
     if isinstance(b, inferpy.models.RandomVariable):
         b = b.base_object
-
 
     a = a if len(a_shape) > 1 else tf.reshape(a, [1] + a_shape)
     b = b if len(b_shape) > 1 else tf.reshape(b, [1] + b_shape)
@@ -208,8 +180,7 @@ def matmul(
     return res
 
 
-def dot(x,y):
-
+def dot(x, y):
     """ Compute dot product between an InferPy or Tensor object. The number of batches N equal to 1
     for one of them, and higher for the other one.
 
@@ -226,11 +197,10 @@ def dot(x,y):
 
      """
 
-
     x_shape = shape_to_list(x)
     y_shape = shape_to_list(y)
 
-    if len(x_shape) == 1 and len(y_shape)==2:
+    if len(x_shape) == 1 and len(y_shape) == 2:
 
         a = y
         b = x
@@ -239,21 +209,18 @@ def dot(x,y):
         a = x
         b = y
 
-
     else:
         raise ValueError("Wrong dimensions")
-
 
     return matmul(a, b, transpose_b=True)
 
 
-
 def shape_to_list(a):
-
     """ Transforms the shape of an object into a list
 
     Args:
-        a : object whose shape will be transformed. This could be an InferPy variable, a Tensor, a numpy object or a numeric Python list.
+        a : object whose shape will be transformed. This could be an InferPy variable, a Tensor, a numpy object or
+        a numeric Python list.
 
     """
 
@@ -266,28 +233,21 @@ def shape_to_list(a):
     elif isinstance(a, tf.Tensor):
         a_shape = a._shape_as_list()
     else:
-        raise ValueError("Wrong input type "+a)
+        raise ValueError("Wrong input type " + a)
 
     return a_shape
 
 
 def fix_shape(s):
-
     """ Transforms a shape list into a standard InferPy shape format. """
 
     ret = []
 
-    for i in range(0,len(s)):
-        if i in [0, len(s)-1] or s[i] != 1:
+    for i in range(0, len(s)):
+        if i in [0, len(s) - 1] or s[i] != 1:
             ret.append(s[i])
 
     if len(ret) == 0:
         return [1]
 
     return ret
-
-
-
-
-
-
