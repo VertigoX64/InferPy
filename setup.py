@@ -33,12 +33,11 @@ setup(
     long_description_content_type="text/markdown",
     author='Andrés R. Masegosa, Rafael Cabañas',
     author_email="andresma@ual.es, rcabanas@ual.es",
-    install_requires=['tensorflow >= 1.5, <1.8', 'numpy>=1.14', 'edward==1.3.5', 'pandas>0.15.0'],
+    install_requires=['tensorflow >= 1.5, <1.8', 'numpy>=1.14', 'edward==1.3.5', 'pandas>0.15.0','funcsigs>=1.0.2'],
     extras_require={
         'tensorflow with gpu': ['tensorflow-gpu  >= 1.5, <1.8'],
         'visualization': ['matplotlib>=1.3',
                           'pillow>=3.4.2',
-                          'funcsigs>=1.0.2',
                           'seaborn>=0.3.1']},
     tests_require=['pytest', 'pytest-pep8'],
     url='http://inferpy.readthedocs.io',
