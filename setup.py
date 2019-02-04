@@ -38,6 +38,7 @@ setup(
         'tensorflow with gpu': ['tensorflow-gpu  >= 1.5, <1.8'],
         'visualization': ['matplotlib>=1.3',
                           'pillow>=3.4.2',
+                          'funcsigs>=1.0.2',
                           'seaborn>=0.3.1']},
     tests_require=['pytest', 'pytest-pep8'],
     url='http://inferpy.readthedocs.io',
